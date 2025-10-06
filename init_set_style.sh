@@ -29,6 +29,8 @@ cat << LOGO
 LOGO
 
 export PROMPT_COMMAND='PS1="$(update_prompt)"'
+bind 'set show-all-if-ambiguous on'
+bind 'TAB:menu-complete'
 alias ls="ls --color"
 alias l="ls"
 alias ll="ls -la"
