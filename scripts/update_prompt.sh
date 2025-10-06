@@ -9,14 +9,22 @@ GIT_COL="\e[35;1m"
 
 GIT_BRANCH=$(git branch 2> /dev/null | sed -n -e 's/^\* \(.*\)/\1/p')
 
-if [[ -n $CONTAINER_ID ]]; then
-	export TOP_PROMPT="╭─($USR_COL$USER@$HOSTNAME$RST_COL)────────►[$DIR_COL${PWD/*$HOME/\~}$RST_COL]────────►{$CTR_COL$CONTAINER_ID$RST_COL}"
+# compact or naw
+
+if [[ $RESPIO_COMPACT == "0" ]]; then
+	ARROW="────────►"
 else
-	export TOP_PROMPT="╭─($USR_COL$USER@$HOSTNAME$RST_COL)────────►[$DIR_COL${PWD/*$HOME/\~}$RST_COL]"
+	ARROW="──►"
+fi
+
+if [[ -n $CONTAINER_ID ]]; then
+	export TOP_PROMPT="╭─($USR_COL$USER@$HOSTNAME$RST_COL)$ARROW[$DIR_COL${PWD/*$HOME/\~}$RST_COL]$ARROW{$CTR_COL$CONTAINER_ID$RST_COL}"
+else
+	export TOP_PROMPT="╭─($USR_COL$USER@$HOSTNAME$RST_COL)$ARROW[$DIR_COL${PWD/*$HOME/\~}$RST_COL]"
 fi
 
 if [[ "$GIT_BRANCH" != "" ]]; then 
-	TOP_PROMPT="$TOP_PROMPT────────►[$GIT_COL$GIT_BRANCH$RST_COL]" 
+	TOP_PROMPT="$TOP_PROMPT$ARROW[$GIT_COL$GIT_BRANCH$RST_COL]" 
 fi
 
 MID_PROMPT="┷"

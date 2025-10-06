@@ -3,16 +3,14 @@
 LOCAL_EXEC_PATH="$HOME/.local/bin"
 RESPIO_CONFIG_PATH="$HOME/.local/share/ResPio"
 
-if [[ $(grep "RESPIO_CONFIG_PATH" "$HOME/.bashrc") == "" ]]; then
-	echo "export RESPIO_CONFIG_PATH=$RESPIO_CONFIG_PATH" >> "$HOME/.bashrc"
-fi
 # получает путь и засовывает его в cat
 add-to-top-of-init-set-style() {
 	PREV_DIR="$(pwd)"
+	BANNER=$1
 	cd "$HOME/.bashrc.d"
 	touch "./temp.sh"
-	if [[ "$1" != "" ]]; then
-		echo -e "#!/usr/bin/env bash\nclear\ncat $1" > "./temp.sh"
+	if [[ "$BANNER" != "" ]]; then
+		echo -e "#!/usr/bin/env bash\nclear\ncat $BANNER" > "./temp.sh"
 	else
 		echo -e "#!/usr/bin/env bash\nclear" > "./temp.sh"
 	fi
@@ -22,42 +20,54 @@ add-to-top-of-init-set-style() {
 	mv "./temp.sh" "init_set_style"
 }
 
+configure-theme() {
+	echo -n "Хотите компактный промпт или широкий? [_c_ompact/_w_ide]: "
+	read ans
+	case $ans in
+		"c")
+			sed -i 's/COMPACT=0/COMPACT=1/' "$RESPIO_CONFIG_PATH/settings"
+			;;
+		"w")
+			sed -i 's/COMPACT=1/COMPACT=0/' "$RESPIO_CONFIG_PATH/settings"
+			;;
+		*)
+			echo "не понял :("
+			;;
+	esac
+
+}
+
 configure-banner() {
 
-	if [[ -d "$RESPIO_CONFIG_PATH" ]]; then
-		cp -rf "$(pwd)/banners" "$RESPIO_CONFIG_PATH/banners"
-		echo "Какой текст вы хотели бы выбрать для вывода при входе в командную строчку?
-			1. Welcome, Human
-			2. Welcome
-			3. E. C. Pioneer
-			4. Первопроходец
-			5. Добрый день
-			*. ничего"
-		read ans
-		case $ans in
-			"1")
-				add-to-top-of-init-set-style "$RESPIO_CONFIG_PATH/banners/welcome-human"
-				;;
-			"2")
-				add-to-top-of-init-set-style "$RESPIO_CONFIG_PATH/banners/welcome"
-				;;
-			"3")
-				add-to-top-of-init-set-style "$RESPIO_CONFIG_PATH/banners/e-c-pioneer"
-				;;
-			"4")
-				add-to-top-of-init-set-style "$RESPIO_CONFIG_PATH/banners/pp"
-				;;
-			"5")
-				add-to-top-of-init-set-style "$RESPIO_CONFIG_PATH/banners/dd"
-				;;
-			*)
-				add-to-top-of-init-set-style
-				;;
-		esac
-	else
-		mkdir "$RESPIO_CONFIG_PATH"
-		configure-banner
-	fi
+	cp -rf "$(pwd)/banners" "$RESPIO_CONFIG_PATH/banners"
+	echo "Какой текст вы хотели бы выбрать для вывода при входе в командную строчку?
+		1. Welcome, Human
+		2. Welcome
+		3. E. C. Pioneer
+		4. Первопроходец
+		5. Добрый день
+		*. ничего"
+	read ans
+	case $ans in
+		"1")
+			add-to-top-of-init-set-style "$RESPIO_CONFIG_PATH/banners/welcome-human"
+			;;
+		"2")
+			add-to-top-of-init-set-style "$RESPIO_CONFIG_PATH/banners/welcome"
+			;;
+		"3")
+			add-to-top-of-init-set-style "$RESPIO_CONFIG_PATH/banners/e-c-pioneer"
+			;;
+		"4")
+			add-to-top-of-init-set-style "$RESPIO_CONFIG_PATH/banners/pp"
+			;;
+		"5")
+			add-to-top-of-init-set-style "$RESPIO_CONFIG_PATH/banners/dd"
+			;;
+		*)
+			add-to-top-of-init-set-style
+			;;
+	esac
 
 }
 
@@ -78,7 +88,6 @@ local-bin-setup() {
 			chmod +x "$LOCAL_EXEC_PATH/update_prompt"
 			path-setup
 			echo -e "Успешно установлен \e[34mupdate_prompt!\e[0m"
-			configure-banner
 		else
 			echo "ОШИБКА: не найден update_prompt.sh в рабочей директории ($(pwd))"
 			exit 3
@@ -100,7 +109,6 @@ bashrcd-setup() {
 			fi
 			chmod +x "$HOME/.bashrc.d/init_set_style"
 			echo "init_set_style установлен!"
-			local-bin-setup
 		else
 			echo "ОШИБКА: не найден init_set_style.sh в рабочей директории ($(pwd))"
 		fi
@@ -115,6 +123,25 @@ bashrcd-setup() {
 
 }
 
+start-install() {
+
+	touch "$HOME/.bashrc_temp"
+	
+	if [[ ! -d $RESPIO_CONFIG_PATH ]]; then
+		mkdir $RESPIO_CONFIG_PATH
+		cp "$(pwd)/default/settings.sh" "$RESPIO_CONFIG_PATH/settings"
+	fi
+
+	if [[ $(grep "RESPIO_CONFIG_PATH" "$HOME/.bashrc") == "" ]]; then
+		echo -e "# .bashrc but cool\nexport RESPIO_CONFIG_PATH=$RESPIO_CONFIG_PATH\nsource \$RESPIO_CONFIG_PATH/settings" >> "$HOME/.bashrc_temp"
+	fi
+	if [[ ! -f "$RESPIO_CONFIG_PATH/settings" ]]; then
+		cp "$(pwd)/default/settings.sh" "$RESPIO_CONFIG_PATH/settings"
+	fi
+	cat "$HOME/.bashrc" >> "$HOME/.bashrc_temp"
+	rm "$HOME/.bashrc"
+	mv "$HOME/.bashrc_temp" "$HOME/.bashrc"
+}
 echo "Добро пожаловать в установщик моей темы для bash! Она работает следующим образом:
 	- Создаёт ~/.bashrc.d при отсутствии
 	- Копирует в неё init_set_style.sh (оставляя без sh)
@@ -139,7 +166,11 @@ case $ans in
 		;;
 esac
 
+start-install
 bashrcd-setup
+local-bin-setup
+configure-banner
+configure-theme
 
 echo -e "Установка \e[32mзавершена!\e[0m Тема будет применена после \e[31mперезапуска терминала!\e[0m"
 
