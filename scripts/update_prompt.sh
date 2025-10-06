@@ -7,7 +7,7 @@ DIR_COL="\e[32;4m"
 PMT_COL="\e[7m"
 GIT_COL="\e[35;1m"
 
-GIT_BRANCH=$(git branch 2> /dev/null | sed -n -e 's/^\* \(.*\)/[\1]/p')
+GIT_BRANCH=$(git branch 2> /dev/null | sed -n -e 's/^\* \(.*\)/\1/p')
 
 if [[ -n $CONTAINER_ID ]]; then
 	export TOP_PROMPT="╭─($USR_COL$USER@$HOSTNAME$RST_COL)────────►[$DIR_COL${PWD/*$HOME/\~}$RST_COL]────────►{$CTR_COL$CONTAINER_ID$RST_COL}"
@@ -16,7 +16,7 @@ else
 fi
 
 if [[ "$GIT_BRANCH" != "" ]]; then 
-	TOP_PROMPT="$TOP_PROMPT────────►$GIT_COL$GIT_BRANCH$RST_COL" 
+	TOP_PROMPT="$TOP_PROMPT────────►[$GIT_COL$GIT_BRANCH$RST_COL]" 
 fi
 
 MID_PROMPT="┷"
