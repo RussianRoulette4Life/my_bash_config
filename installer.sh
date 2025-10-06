@@ -32,6 +32,9 @@ bashrcd-setup() {
 	if [[ -d "$HOME/.bashrc.d" ]]; then
 		if [[ -f "$(pwd)/init_set_style.sh" ]]; then
 			cp "init_set_style.sh" "$HOME/.bashrc.d/init_set_style"
+			if [[ $(grep ".bashrc.d" "$HOME/.bashrc") == "" ]]; then
+				echo -e "if [ -d ~/.bashrc.d ]; then\n\tfor rc in ~/.bashrc.d/*; do\n\t\tif [ -f \"\$rc\" ]; then\n\t\t\t. \"\$rc\"\n\t\tfi \n\tdone\nfi\nunset rc" >> "$HOME/.bashrc"
+			fi
 			chmod +x "$HOME/.bashrc.d/init_set_style"
 			echo "init_set_style установлен!"
 			local-bin-setup
@@ -41,7 +44,7 @@ bashrcd-setup() {
 	else
 		mkdir "$HOME/.bashrc.d"
 		if [[ $(grep ".bashrc.d" "$HOME/.bashrc") == "" ]]; then
-			echo -e "if [ -d ~/.bashrc.d ]; then\n\tfor rc in ~/.bashrc.d/*; do\n\t\tif [ -f \"\$rc\" ]; then\n\t\t\t. \"\$rc\"\n\t\tfi \n\tdone\nfi\nunset rc" >> "$HOME/.bashrc_test"
+			echo -e "if [ -d ~/.bashrc.d ]; then\n\tfor rc in ~/.bashrc.d/*; do\n\t\tif [ -f \"\$rc\" ]; then\n\t\t\t. \"\$rc\"\n\t\tfi \n\tdone\nfi\nunset rc" >> "$HOME/.bashrc"
 		fi
 		bashrcd-setup
 	fi
