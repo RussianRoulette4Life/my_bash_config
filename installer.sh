@@ -21,14 +21,17 @@ add-to-top-of-init-set-style() {
 }
 
 configure-theme() {
-	echo -n "Хотите компактный промпт или широкий? [_c_ompact/_w_ide]: "
+	echo -n "Хотите промпт ультракомпактный, компактный или широкий? [_u_ltracompact/_c_ompact/_w_ide]: "
 	read ans
 	case $ans in
+		"u")
+			sed -i 's/COMPACT=[0-9]/COMPACT=2/' "$RESPIO_CONFIG_PATH/settings"
+			;;
 		"c")
-			sed -i 's/COMPACT=0/COMPACT=1/' "$RESPIO_CONFIG_PATH/settings"
+			sed -i 's/COMPACT=[0-9]/COMPACT=1/' "$RESPIO_CONFIG_PATH/settings"
 			;;
 		"w")
-			sed -i 's/COMPACT=1/COMPACT=0/' "$RESPIO_CONFIG_PATH/settings"
+			sed -i 's/COMPACT=[0-9]/COMPACT=0/' "$RESPIO_CONFIG_PATH/settings"
 			;;
 		*)
 			echo "не понял :("

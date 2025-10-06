@@ -10,15 +10,20 @@ GIT_COL="\e[35;1m"
 GIT_BRANCH=$(git branch 2> /dev/null | sed -n -e 's/^\* \(.*\)/\1/p')
 
 # compact or naw
-
-if [[ $RESPIO_COMPACT == "0" ]]; then
-	ARROW="────────►"
-else
-	ARROW="──►"
-fi
+case $RESPIO_COMPACT in
+	"0")
+		ARROW="────────►"
+		;;
+	"1")
+		ARROW="──►"
+		;;
+	"2")
+		ARROW="─►"
+		;;
+esac
 
 if [[ -n $CONTAINER_ID ]]; then
-	export TOP_PROMPT="╭─($USR_COL$USER@$HOSTNAME$RST_COL)$ARROW[$DIR_COL${PWD/*$HOME/\~}$RST_COL]$ARROW{$CTR_COL$CONTAINER_ID$RST_COL}"
+	export TOP_PROMPT="╭─($USR_COL$USER@$HOSTNAME$RST_COL)$ARROW{$CTR_COL$CONTAINER_ID$RST_COL}$ARROW[$DIR_COL${PWD/*$HOME/\~}$RST_COL]"
 else
 	export TOP_PROMPT="╭─($USR_COL$USER@$HOSTNAME$RST_COL)$ARROW[$DIR_COL${PWD/*$HOME/\~}$RST_COL]"
 fi
