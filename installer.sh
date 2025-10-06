@@ -65,7 +65,7 @@ path-setup() {
 
 	if [[ "$PATH" != *"$LOCAL_EXEC_PATH"* ]]; then
 		export PATH="$PATH:$LOCAL_EXEC_PATH"
-		echo 'export PATH="$PATH:$LOCAL_EXEC_PATH' >> "$HOME/.bashrc"
+		echo "export PATH=\$PATH:$LOCAL_EXEC_PATH" >> "$HOME/.bashrc"
 	fi
 
 }
