@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 CTR_COL="\e[31m"
-USR_COL="\e[1;3m"
+USR_COL="\e[34;3m"
 RST_COL="\e[0m"
 DIR_COL="\e[32;4m"
 PMT_COL="\e[7m"
