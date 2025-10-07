@@ -8,6 +8,8 @@ case $ans in
 	"y")
 		rm "$HOME/.bashrc.d/init_set_style"
 		rm -rf "$RESPIO_CONFIG_PATH"
+		rm "$HOME/.respio_bootstrap"
+		sed -i "s-source $HOME/.respio_bootstrap--" "$HOME/.bashrc"
 		echo "Готово!"
 		;;
 	"n")

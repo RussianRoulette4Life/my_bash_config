@@ -42,7 +42,7 @@ configure-compact-theme() {
 configure-theme() {
 	echo "Какую тему стоит установить?"
 	for theme in $(ls "$RESPIO_CONFIG_PATH/themes"); do
-		echo -e "$theme:\t\n$(bash -c $RESPIO_CONFIG_PATH/themes/$theme)\n"
+		echo -e "Тема: $theme:\n$(bash -c $RESPIO_CONFIG_PATH/themes/$theme)\n"
 	done
 	echo "Ничего: стандартная тема (default)"
 	read ans
@@ -96,8 +96,7 @@ bashrcd-setup() {
 		if [[ -f "$(pwd)/scripts/init_set_style.sh" ]]; then
 			cp "scripts/init_set_style.sh" "$HOME/.bashrc.d/init_set_style"
 			if [[ $(grep ".bashrc.d" "$HOME/.bashrc") == "" ]]; then
-				echo '# если тема удалена, можно спокойно удалять строки до unset rc' >> "$HOME/.bashrc"
-				echo -e "if [ -d ~/.bashrc.d ]; then\n\tfor rc in ~/.bashrc.d/*; do\n\t\tif [ -f \"\$rc\" ]; then\n\t\t\t. \"\$rc\"\n\t\tfi \n\tdone\nfi\nunset rc" >> "$HOME/.bashrc"
+				echo -e "if [ -d ~/.bashrc.d ]; then\n\tfor rc in ~/.bashrc.d/*; do\n\t\tif [ -f \"\$rc\" ]; then\n\t\t\t. \"\$rc\"\n\t\tfi \n\tdone\nfi\nunset rc" >> "$HOME/.respio_bootstrap"
 			fi
 			chmod +x "$HOME/.bashrc.d/init_set_style"
 			echo "init_set_style установлен!"
@@ -106,40 +105,22 @@ bashrcd-setup() {
 		fi
 	else
 		mkdir "$HOME/.bashrc.d"
-		if [[ $(grep ".bashrc.d" "$HOME/.bashrc") == "" ]]; then
-				echo '# если тема удалена, можно спокойно удалять строки до unset rc' >> "$HOME/.bashrc"
-			echo -e "if [ -d ~/.bashrc.d ]; then\n\tfor rc in ~/.bashrc.d/*; do\n\t\tif [ -f \"\$rc\" ]; then\n\t\t\t. \"\$rc\"\n\t\tfi \n\tdone\nfi\nunset rc" >> "$HOME/.bashrc"
-		fi
 		bashrcd-setup
 	fi
 
 }
 
 start-install() {
-
-	touch "$HOME/.bashrc_temp"
+	cp "default/respio_bootstrap" "$HOME/.respio_bootstrap"
+	if [[ $(cat "$HOME/.bashrc" | grep "source $HOME/.respio_bootstrap") == "" ]]; then
+		echo "source $HOME/.respio_bootstrap" >> "$HOME/.bashrc"
+	fi
 	# IMPORTANT: все файлы для тем копируются именно на этом этапе
 	if [[ ! -d $RESPIO_CONFIG_PATH ]]; then
 		mkdir $RESPIO_CONFIG_PATH
 		cp "$(pwd)/default/settings.sh" "$RESPIO_CONFIG_PATH/settings"
 		cp -r "$(pwd)/themes" "$RESPIO_CONFIG_PATH/themes"
 	fi
-
-	if [[ $(grep "RESPIO_CONFIG_PATH" "$HOME/.bashrc") == "" ]]; then
-		echo -e "# .bashrc but cool\nexport RESPIO_CONFIG_PATH=$RESPIO_CONFIG_PATH\nsource \$RESPIO_CONFIG_PATH/settings" >> "$HOME/.bashrc_temp"
-	fi
-
-	if [[ ! -f "$RESPIO_CONFIG_PATH/settings" ]]; then
-		cp "$(pwd)/default/settings.sh" "$RESPIO_CONFIG_PATH/settings"
-	fi
-
-	if [[ ! -d "$RESPIO_CONFIG_PATH/themes" ]]; then
-		cp -r "$(pwd)/themes" "$RESPIO_CONFIG_PATH/themes"
-	fi
-
-	cat "$HOME/.bashrc" >> "$HOME/.bashrc_temp"
-	rm "$HOME/.bashrc"
-	mv "$HOME/.bashrc_temp" "$HOME/.bashrc"
 }
 echo "Добро пожаловать в установщик моей темы для bash! Она работает следующим образом:
 	- Создаёт ~/.bashrc.d при отсутствии
