@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-export RESPIO_CONFIG_PATH=/home/ruslan/.local/share/ResPio
+export RESPIO_CONFIG_PATH="$HOME/.local/share/ResPio"
 source $RESPIO_CONFIG_PATH/settings
