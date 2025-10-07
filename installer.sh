@@ -120,13 +120,6 @@ echo "Добро пожаловать в установщик моей темы 
 
 read ans
 
-if [[ $( ls "/usr/bin" | grep "git" ) == "" ]]; then
-	echo "Установите git!"
-	exit 109
-else
-	echo "git найден"
-fi
-
 case $ans in
 	"y")
 		echo -e "\e[32mНачинаем\e[0m..."
