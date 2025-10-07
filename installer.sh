@@ -114,6 +114,8 @@ start-install() {
 	cp "default/respio_bootstrap" "$HOME/.respio_bootstrap"
 	if [[ $(cat "$HOME/.bashrc" | grep "source $HOME/.respio_bootstrap") == "" ]]; then
 		echo "source $HOME/.respio_bootstrap" >> "$HOME/.bashrc"
+	else
+		sed -i "s-#source $HOME/.respio_bootstrap-source $HOME/.respio_bootstrap-" "$HOME/.bashrc"
 	fi
 	# IMPORTANT: все файлы для тем копируются именно на этом этапе
 	if [[ ! -d $RESPIO_CONFIG_PATH ]]; then
