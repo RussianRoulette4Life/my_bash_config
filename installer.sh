@@ -22,27 +22,14 @@ add-to-top-of-init-set-style() {
 configure-compact-theme() {
 	echo -n "Хотите промпт ультракомпактный, компактный или широкий? [_u_ltracompact/_c_ompact/_w_ide]: "
 	read ans
-	case $ans in
-		"u")
-			sed -i 's/COMPACT=[0-9]/COMPACT=2/' "$RESPIO_CONFIG_PATH/settings"
-			;;
-		"c")
-			sed -i 's/COMPACT=[0-9]/COMPACT=1/' "$RESPIO_CONFIG_PATH/settings"
-			;;
-		"w")
-			sed -i 's/COMPACT=[0-9]/COMPACT=0/' "$RESPIO_CONFIG_PATH/settings"
-			;;
-		*)
-			echo "не понял :("
-			;;
-	esac
+	sed -i "s/COMPACT=[a-z]/COMPACT=$ans/" "$RESPIO_CONFIG_PATH/settings"
 
 }
 
 configure-theme() {
 	echo "Какую тему стоит установить?"
 	for theme in $(ls "$RESPIO_CONFIG_PATH/themes"); do
-		echo -e "Тема: $theme:\n$(bash -c $RESPIO_CONFIG_PATH/themes/$theme)\n"
+		echo -e "Тема: $theme\n$(bash -c $RESPIO_CONFIG_PATH/themes/$theme)\n"
 	done
 	echo "Ничего: стандартная тема (default)"
 	read ans

@@ -5,8 +5,8 @@
 # который экспортирует TOP_PROMPT и MID_PROMPT в RESPIO_CONFIG_PATH/themes/
 export RESPIO_THEME=default
 
-# работает для тем с длинными стрелочками
-export RESPIO_COMPACT=0
+# работает для тем с длинными стрелочками (w - wide, c - compact, u - ultracompact)
+export RESPIO_COMPACT=u
 
 
 

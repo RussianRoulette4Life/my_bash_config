@@ -11,13 +11,13 @@ GIT_BRANCH=$(git branch 2> /dev/null | sed -n -e 's/^\* \(.*\)/\1/p')
 
 # compact or naw
 case $RESPIO_COMPACT in
-	"0")
+	"w")
 		ARROW="────────►"
 		;;
-	"1")
+	"c")
 		ARROW="──►"
 		;;
-	"2")
+	"u")
 		ARROW="─►"
 		;;
 esac
