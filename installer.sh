@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-LOCAL_EXEC_PATH="$HOME/.local/bin"
 RESPIO_CONFIG_PATH="$HOME/.local/share/ResPio"
 
 # получает путь и засовывает его в cat
@@ -20,7 +19,7 @@ add-to-top-of-init-set-style() {
 	mv "./temp.sh" "init_set_style"
 }
 
-configure-theme() {
+configure-compact-theme() {
 	echo -n "Хотите промпт ультракомпактный, компактный или широкий? [_u_ltracompact/_c_ompact/_w_ide]: "
 	read ans
 	case $ans in
@@ -38,6 +37,22 @@ configure-theme() {
 			;;
 	esac
 
+}
+
+configure-theme() {
+	echo "Какую тему стоит установить?"
+	for theme in $(ls "$RESPIO_CONFIG_PATH/themes"); do
+		echo -e "$theme:\t\n$(bash -c $RESPIO_CONFIG_PATH/themes/$theme)\n"
+	done
+	echo "Ничего: стандартная тема (default)"
+	read ans
+	if [[ $ans != "" ]]; then
+		sed -i "s/THEME=[a-z]*/THEME=$ans/" "$RESPIO_CONFIG_PATH/settings"
+	fi
+
+	if [[ $ans != "simple" ]]; then
+		configure-compact-theme
+	fi
 }
 
 configure-banner() {
@@ -74,32 +89,6 @@ configure-banner() {
 
 }
 
-path-setup() {
-
-	if [[ "$PATH" != *"$LOCAL_EXEC_PATH"* ]]; then
-		export PATH="$PATH:$LOCAL_EXEC_PATH"
-		echo "export PATH=\$PATH:$LOCAL_EXEC_PATH" >> "$HOME/.bashrc"
-	fi
-
-}
-
-local-bin-setup() {
-
-	if [[ -d "$LOCAL_EXEC_PATH" ]]; then
-		if [[ -f "$(pwd)/scripts/update_prompt.sh" ]]; then
-			cp "scripts/update_prompt.sh" "$LOCAL_EXEC_PATH/update_prompt"
-			chmod +x "$LOCAL_EXEC_PATH/update_prompt"
-			path-setup
-			echo -e "Успешно установлен \e[34mupdate_prompt!\e[0m"
-		else
-			echo "ОШИБКА: не найден update_prompt.sh в рабочей директории ($(pwd))"
-			exit 3
-		fi
-	else
-		mkdir "$LOCAL_EXEC_PATH"
-		local-bin-setup
-	fi
-}
 
 bashrcd-setup() {
 
@@ -129,18 +118,25 @@ bashrcd-setup() {
 start-install() {
 
 	touch "$HOME/.bashrc_temp"
-	
+	# IMPORTANT: все файлы для тем копируются именно на этом этапе
 	if [[ ! -d $RESPIO_CONFIG_PATH ]]; then
 		mkdir $RESPIO_CONFIG_PATH
 		cp "$(pwd)/default/settings.sh" "$RESPIO_CONFIG_PATH/settings"
+		cp -r "$(pwd)/themes" "$RESPIO_CONFIG_PATH/themes"
 	fi
 
 	if [[ $(grep "RESPIO_CONFIG_PATH" "$HOME/.bashrc") == "" ]]; then
 		echo -e "# .bashrc but cool\nexport RESPIO_CONFIG_PATH=$RESPIO_CONFIG_PATH\nsource \$RESPIO_CONFIG_PATH/settings" >> "$HOME/.bashrc_temp"
 	fi
+
 	if [[ ! -f "$RESPIO_CONFIG_PATH/settings" ]]; then
 		cp "$(pwd)/default/settings.sh" "$RESPIO_CONFIG_PATH/settings"
 	fi
+
+	if [[ ! -d "$RESPIO_CONFIG_PATH/themes" ]]; then
+		cp -r "$(pwd)/themes" "$RESPIO_CONFIG_PATH/themes"
+	fi
+
 	cat "$HOME/.bashrc" >> "$HOME/.bashrc_temp"
 	rm "$HOME/.bashrc"
 	mv "$HOME/.bashrc_temp" "$HOME/.bashrc"
@@ -148,9 +144,8 @@ start-install() {
 echo "Добро пожаловать в установщик моей темы для bash! Она работает следующим образом:
 	- Создаёт ~/.bashrc.d при отсутствии
 	- Копирует в неё init_set_style.sh (оставляя без sh)
-	- Создаёт (если нет) ~/.local/bin, кидает туда update_prompt.sh (без sh)
 	- Добавляет в .bashrc строки если нет логики просмотра ~/.bashrc.d
-	- создаёт конфиг папку (скорее всего в ~/.local/share), куда заливает баннеры
+	- создаёт конфиг папку (скорее всего в ~/.local/share), куда заливает баннеры, темы и настройки
 Продолжить? [y/n]"
 
 read ans
@@ -171,7 +166,6 @@ esac
 
 start-install
 bashrcd-setup
-local-bin-setup
 configure-banner
 configure-theme
 

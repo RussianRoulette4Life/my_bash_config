@@ -7,7 +7,6 @@ read ans
 case $ans in
 	"y")
 		rm "$HOME/.bashrc.d/init_set_style"
-		rm "$(which update_prompt)"
 		rm -rf "$RESPIO_CONFIG_PATH"
 		echo "Готово!"
 		;;

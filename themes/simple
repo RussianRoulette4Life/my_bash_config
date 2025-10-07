@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+CTR_COL="\e[31m"
+USR_COL="\e[34;3m"
+RST_COL="\e[0m"
+DIR_COL="\e[32;4m"
+PMT_COL="\e[7m"
+GIT_COL="\e[35;1m"
+
+GIT_BRANCH=$(git branch 2> /dev/null | sed -n -e 's/^\* \(.*\)/\1/p')
+
+if [[ "$GIT_BRANCH" != "" ]]; then 
+	PROMPT="$USR_COL$USER@$HOSTNAME$RST_COL:($GIT_COL$GIT_BRANCH$RST_COL)${PWD/*$HOME/\~} \$ "
+else
+	PROMPT="$USR_COL$USER@$HOSTNAME$RST_COL:${PWD/*$HOME/\~} \$ "
+fi
+
+echo "$PROMPT"

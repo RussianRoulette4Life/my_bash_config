@@ -1,6 +1,5 @@
-export PROMPT_COMMAND_OLD='PS1="\n\e[1;3m$USER@$HOSTNAME\e[0m:${PWD/*$HOME/\~}\n\$ "'
 
-export PROMPT_COMMAND='PS1="$(update_prompt)"'
+export PROMPT_COMMAND='PS1="$(bash -c $RESPIO_CONFIG_PATH/themes/$RESPIO_THEME)"'
 bind 'set show-all-if-ambiguous on'
 bind 'TAB:menu-complete'
 alias ls="ls --color"
