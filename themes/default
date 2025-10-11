@@ -32,5 +32,11 @@ if [[ "$GIT_BRANCH" != "" ]]; then
 	TOP_PROMPT="$TOP_PROMPT$ARROW[$GIT_COL$GIT_BRANCH$RST_COL]" 
 fi
 
-MID_PROMPT="┷"
+if [[ -d "/sys/class/power_supply/BAT0" && $SHOW_BAT_CHARGE="yes" ]]; then
+	CHARGE_LEVEL=$(cat /sys/class/power_supply/BAT0/capacity)
+	MID_PROMPT="┷[$CHARGE_LEVEL%]"
+else
+	MID_PROMPT="┷"
+fi
+
 echo "\n$TOP_PROMPT\n$MID_PROMPT \$ "

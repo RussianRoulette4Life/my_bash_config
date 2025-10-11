@@ -15,4 +15,8 @@ else
 	PROMPT="$USR_COL$USER@$HOSTNAME$RST_COL:${PWD/*$HOME/\~} \$ "
 fi
 
+if [[ -d "/sys/class/power_supply/BAT0" && $SHOW_BAT_CHARGE="yes" ]]; then
+	CHARGE_LEVEL=$(cat /sys/class/power_supply/BAT0/capacity)
+	PROMPT="[$CHARGE_LEVEL%] $PROMPT"
+fi
 echo "$PROMPT"
