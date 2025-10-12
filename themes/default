@@ -27,7 +27,7 @@ esac
 
 if [[ $RESPIO_SHOW_TIME="yes" ]]; then
 	CURRENT_TIME=$(date | sed -r -n "s/.*([0-9][0-9]:[0-9]+:[0-9][0-9]).*/\1/p")
-	TOP_PROMPT="[$TIME_COL$CURRENT_TIME$RST_COL]\n╭─($USR_COL$USER@$HOSTNAME$RST_COL)"
+	TOP_PROMPT="\n[$TIME_COL$CURRENT_TIME$RST_COL]\n╭─($USR_COL$USER@$HOSTNAME$RST_COL)"
 else
 	TOP_PROMPT="\n╭─($USR_COL$USER@$HOSTNAME$RST_COL)"
 fi
