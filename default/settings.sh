@@ -2,16 +2,15 @@
 
 
 # выбор темы. название файла совпадает с названием shell-скрипта, 
-# который экспортирует TOP_PROMPT и MID_PROMPT в RESPIO_CONFIG_PATH/themes/
+# который выдаёт промпт в том или ином виде (через echo). 
+# сами файлы в RESPIO_CONFIG_PATH/themes/
 export RESPIO_THEME=default
 
 
 # СЕКЦИЯ ДЛЯ СТАНДАРТНОЙ ТЕМЫ!
 ## работает для тем с длинными стрелочками (w - wide, c - compact, u - ultracompact)
 export RESPIO_COMPACT=u
-
+export RESPIO_SHOW_TIME=yes
 
 # СЕКЦИЯ ДЛЯ ОБОИХ ТЕМ!
-export SHOW_BAT_CHARGE=yes
-
-
+export RESPIO_SHOW_BAT_CHARGE=yes

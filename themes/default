@@ -7,6 +7,9 @@ DIR_COL="\e[32;4m"
 PMT_COL="\e[7m"
 GIT_COL="\e[35;1m"
 
+#outlier...
+TIME_COL="\e[3m"
+
 GIT_BRANCH=$(git branch 2> /dev/null | sed -n -e 's/^\* \(.*\)/\1/p')
 
 # compact or naw
@@ -22,21 +25,27 @@ case $RESPIO_COMPACT in
 		;;
 esac
 
-if [[ -n $CONTAINER_ID ]]; then
-	export TOP_PROMPT="╭─($USR_COL$USER@$HOSTNAME$RST_COL)$ARROW{$CTR_COL$CONTAINER_ID$RST_COL}$ARROW[$DIR_COL${PWD/*$HOME/\~}$RST_COL]"
+if [[ $RESPIO_SHOW_TIME="yes" ]]; then
+	CURRENT_TIME=$(date | sed -r -n "s/.*([0-9][0-9]:[0-9]+:[0-9][0-9]).*/\1/p")
+	TOP_PROMPT="[$TIME_COL$CURRENT_TIME$RST_COL]\n╭─($USR_COL$USER@$HOSTNAME$RST_COL)"
 else
-	export TOP_PROMPT="╭─($USR_COL$USER@$HOSTNAME$RST_COL)$ARROW[$DIR_COL${PWD/*$HOME/\~}$RST_COL]"
+	TOP_PROMPT="\n╭─($USR_COL$USER@$HOSTNAME$RST_COL)"
+fi
+if [[ -n $CONTAINER_ID ]]; then
+	TOP_PROMPT="$TOP_PROMPT$ARROW{$CTR_COL$CONTAINER_ID$RST_COL}$ARROW[$DIR_COL${PWD/*$HOME/\~}$RST_COL]"
+else
+	TOP_PROMPT="$TOP_PROMPT$ARROW[$DIR_COL${PWD/*$HOME/\~}$RST_COL]"
 fi
 
 if [[ "$GIT_BRANCH" != "" ]]; then 
 	TOP_PROMPT="$TOP_PROMPT$ARROW[$GIT_COL$GIT_BRANCH$RST_COL]" 
 fi
 
-if [[ -d "/sys/class/power_supply/BAT0" && $SHOW_BAT_CHARGE="yes" ]]; then
+if [[ -d "/sys/class/power_supply/BAT0" && $RESPIO_SHOW_BAT_CHARGE="yes" ]]; then
 	CHARGE_LEVEL=$(cat /sys/class/power_supply/BAT0/capacity)
 	MID_PROMPT="┷[$CHARGE_LEVEL%]"
 else
 	MID_PROMPT="┷"
 fi
 
-echo "\n$TOP_PROMPT\n$MID_PROMPT \$ "
+echo "$TOP_PROMPT\n$MID_PROMPT \$ "
